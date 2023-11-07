@@ -106,7 +106,7 @@ target_link_libraries(wolfssl PUBLIC
     pico_stdlib 
     pico_cyw43_arch_lwip_sys_freertos
     FreeRTOS-Kernel
-    freertos_config
+    #freertos_config
     LWIP_PORT
     hardware_adc
     )

@@ -36,7 +36,7 @@ public:
 	Request();
 	Request(char * buffer, uint bufLen);
 	virtual ~Request();
-	void free();
+	void freeMemory();
 
 	void setObserver(RequestObserver *obs);
 	bool get(const char * url, std::map<std::string, std::string> *query = NULL);

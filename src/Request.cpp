@@ -34,7 +34,7 @@ Request::~Request() {
 	}
 }
 
-void Request::free(){
+void Request::freeMemory(){
 	if (pUri != NULL){
 		delete(pUri);
 		pUri = NULL;
@@ -92,7 +92,7 @@ bool Request::doRequest(const char * method, const char * url, const char * payl
 	char authPlain[REQUEST_MAX_PATH];
 	char auth64[REQUEST_MAX_PATH];
 
-	free();
+	freeMemory();
 	pUri = new uri (url);
 
 	int serverPort = pUri->get_port();
