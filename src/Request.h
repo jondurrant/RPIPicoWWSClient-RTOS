@@ -8,6 +8,9 @@
 #ifndef HTTPWS_GETTIMELWIPBM_SRC_REQUEST_H_
 #define HTTPWS_GETTIMELWIPBM_SRC_REQUEST_H_
 
+#if CPPUTEST_USE_NEW_MACROS
+   #undef new
+#endif
 #include "pico/stdlib.h"
 #include "RequestObserver.h"
 #include <map>
@@ -16,6 +19,10 @@
 #include "core_http_client.h"
 #include "TCPTransport.h"
 #include "TLSTransBlock.h"
+
+#if CPPUTEST_USE_NEW_MACROS
+   #include "CppUTest/MemoryLeakDetectorNewMacros.h"
+#endif
 
 #ifndef REQUEST_BUFFER_SIZE
 #define REQUEST_BUFFER_SIZE 256

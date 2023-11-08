@@ -12,14 +12,17 @@ FetchContent_Declare(
 )
 # Set this to ON if you want to have the CppUTests in your project as well.
 set(TESTS OFF CACHE BOOL "Switch off CppUTest Test build")
-set(CPPUTEST_MEM_LEAK_DETECTION_DISABLED ON CACHE BOOL "Turn mem test off")
-set(CPPUTEST_STD_CPP_LIB_DISABLED OFF VAVHE BOOL "OFF")
+set(CPPUTEST_STD_CPP_LIB_DISABLED OFF CACHE BOOL "OFF")
+set(CPPUTEST_PLATFORM OFF CACHE BOOL "Providing FreeRTOS platform")
 FetchContent_MakeAvailable(CppUTest)
 
 add_executable(${TEST_NAME}
     test_main.cpp
     dummy.cpp
     http.cpp
+    https.cpp
+    
+    UtestPlatform.cpp
 )
 
 # Pull in our pico_stdlib which pulls in commonly used features
@@ -60,8 +63,9 @@ target_compile_definitions(${TEST_NAME} PRIVATE
 target_compile_definitions(${TEST_NAME} PRIVATE
     PICO_CXX_DISABLE_ALLOCATION_OVERRIDES
     CPPUTEST_HAVE_EXCEPTIONS=1
-    DISABLE_CPP_LIB
-    CPPUTEST_MEM_LEAK_DETECTION_DISABLED
+    TEST_SERVER="vmu22a.local.jondurrant.com"
+    TEST_PORT="5000"
+    TEST_TLS_PORT="5443"
 )
 
 # create map/bin/hex file etc.

@@ -12,44 +12,44 @@
 #define BUF_LEN 1024
 
 
-#define PROTOCOL "http"
+#define PROTOCOL "https"
 
-TEST_GROUP(HTTPGrp){
+TEST_GROUP(HTTPSGrp){
 
 
 
 };
 
-TEST(HTTPGrp, HTTPget){
+TEST(HTTPSGrp, HTTPSget){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
 		//char url[] = "http://vmu22a.local.jondurrant.com:5000/time";
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/time";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/time";
 
 		CHECK(req.get(url));
 
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPpost){
+TEST(HTTPSGrp, HTTPSpost){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
 		//char url[] = "http://vmu22a.local.jondurrant.com:5000/time";
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/time";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/time";
 
 		CHECK(req.post(url));
 
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPquery){
+TEST(HTTPSGrp, HTTPSquery){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
 		//char url[] = "http://vmu22a.local.jondurrant.com:5000/time";
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/temp";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/temp";
 
 		std::map<std::string, std::string> query;
 
@@ -60,12 +60,12 @@ TEST(HTTPGrp, HTTPquery){
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPpostData){
+TEST(HTTPSGrp, HTTPSpostData){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
 		//char url[] = "http://vmu22a.local.jondurrant.com:5000/time";
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/temp";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/temp";
 
 		std::map<std::string, std::string> query;
 
@@ -76,62 +76,62 @@ TEST(HTTPGrp, HTTPpostData){
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPgetAuth){
+TEST(HTTPSGrp, HTTPSgetAuth){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
 		//char url[] = "http://vmu22a.local.jondurrant.com:5000/time";
-		char url[] = PROTOCOL "://john:hello@" TEST_SERVER ":" TEST_PORT "/user";
+		char url[] = PROTOCOL "://john:hello@" TEST_SERVER ":" TEST_TLS_PORT "/user";
 
 		CHECK(req.get(url));
 
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPpostAuth){
+TEST(HTTPSGrp, HTTPSpostAuth){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
-		char url[] = PROTOCOL "://john:hello@" TEST_SERVER ":" TEST_PORT "/user";
+		char url[] = PROTOCOL "://john:hello@" TEST_SERVER ":" TEST_TLS_PORT "/user";
 
 		CHECK(req.post(url));
 
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPgetUserCred){
+TEST(HTTPSGrp, HTTPSgetUserCred){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 		char user[] = "john";
 		char passwd[] = "hello";
 
 		req.setCredentials(user, passwd);
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/user";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/user";
 
 		CHECK(req.get(url));
 
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPpostUserCred){
+TEST(HTTPSGrp, HTTPSpostUserCred){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 		char user[] = "john";
 		char passwd[] = "hello";
 
 		req.setCredentials(user, passwd);
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/user";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/user";
 
 		CHECK(req.post(url));
 
 		CHECK_EQUAL(200, 	req.getStatusCode());
 }
 
-TEST(HTTPGrp, HTTPgetUnknown){
+TEST(HTTPSGrp, HTTPSgetUnknown){
 		char userBuf[BUF_LEN];
 		Request req((char *)userBuf, BUF_LEN);
 
-		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_PORT "/fail";
+		char url[] = PROTOCOL "://" TEST_SERVER ":" TEST_TLS_PORT "/fail";
 
 		CHECK(req.post(url));
 
