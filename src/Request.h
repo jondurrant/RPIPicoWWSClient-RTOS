@@ -8,9 +8,6 @@
 #ifndef HTTPWS_GETTIMELWIPBM_SRC_REQUEST_H_
 #define HTTPWS_GETTIMELWIPBM_SRC_REQUEST_H_
 
-#if CPPUTEST_USE_NEW_MACROS
-   #undef new
-#endif
 #include "pico/stdlib.h"
 #include "RequestObserver.h"
 #include <map>
@@ -19,10 +16,6 @@
 #include "core_http_client.h"
 #include "TCPTransport.h"
 #include "TLSTransBlock.h"
-
-#if CPPUTEST_USE_NEW_MACROS
-   #include "CppUTest/MemoryLeakDetectorNewMacros.h"
-#endif
 
 #ifndef REQUEST_BUFFER_SIZE
 #define REQUEST_BUFFER_SIZE 256
@@ -40,29 +33,105 @@
 
 class Request {
 public:
+	/***
+	 * Constructor will allocate own buffer.
+	 */
 	Request();
+
+	/***
+	 * Constructor with buffer for working space
+	 * @param buffer - Buffer area
+	 * @param bufLen - Length of buffer
+	 */
 	Request(char * buffer, uint bufLen);
+
 	virtual ~Request();
+
+	/***
+	 * Free up any memory allocated during process
+	 */
 	void freeMemory();
 
+	/***
+	 * Set Observer to get notified of response
+	 * @param obs
+	 */
 	void setObserver(RequestObserver *obs);
+
+	/***
+	 * Undertake an HTTP Get
+	 * @param url - URL to connect to
+	 * @param query - Query to send as name/value pairs
+	 * @return true if successful
+	 */
 	bool get(const char * url, std::map<std::string, std::string> *query = NULL);
+
+	/***
+	 * Undertake an HTTP Post
+	 * @param url - URL to connect to
+	 * @param query - Query to send as name/value pairs
+	 * @return true if successful
+	 */
 	bool post(const char * url,  std::map<std::string, std::string> *query = NULL);
 
-	void setCredentials(char * username, char * password);
-
+	/**
+	 * Get the HTTP result code
+	 * @return 200 for sucess
+	 */
 	int getStatusCode();
+
+	/***
+	 * Get a pointer to the start of the headers.
+	 * Though char * they may not be null terminated.
+	 * @return
+	 */
 	const char * getHeader();
+
+	/***
+	 * Get the length of the HTTP Headers
+	 * @return
+	 */
 	int getHeaderLen();
+
+	/***
+	 * Get the payload start location. It may not be null terminatqed
+	 * Use getPayloadLen to identify length
+	 * @return
+	 */
 	const char * getPayload();
+
+	/***
+	 * Returns the length of the payload returned from the request
+	 * @return
+	 */
 	int getPayloadLen();
+
+	/***
+	 * Get the URI that will be connected to as a char * null terminated
+	 * @return - URL
+	 */
 	const char * getUriChar();
 
 private:
+	/***
+	 * Issue an HTTP Request
+	 * @param method - Request type GET or POST
+	 * @param url - URL to conect to
+	 * @param payload - Payload to send if a POSt
+	 * @param payloadLen - Payload length
+	 * @return true if sucessful
+	 */
 	bool doRequest(const char * method, const char * url, const char * payload, uint payloadLen);
-	bool b64Encode(const unsigned char *in, size_t inLen, unsigned char *out, size_t outLen);
 
-	void heapStats(const char * prefix);
+    /***
+     * Encode string using URL encoding rules
+     * Note does not null terminate the target
+     * @param target - target location to write to
+     * @param source - source string (null terminated)
+     * @return number of characters written to target
+     */
+    int urlEncode(char *target, const char * source);
+
 
 	void *pAllocBuffer = NULL;
 	char * pBuffer = NULL;
@@ -81,10 +150,6 @@ private:
 	TCPTransport xSockTrans;
 	TLSTransBlock xTLSTrans;
 	Transport *pTrans;
-
-	char * pUsername = NULL;
-	char * pPassword = NULL;
-
 
 };
 

@@ -67,12 +67,12 @@ bool Request::get(const char * url, std::map<std::string, std::string> *query){
 				strcpy(&path[length],  it->first.c_str());
 				length +=  it->first.length();
 				path[length++] = '=';
-				strcpy(&path[length],  it->second.c_str());
-				length +=  it->second.length();
+				length += urlEncode(&path[length],  it->second.c_str());
 
 				it++;
 				if ( it != query->end()){
 					path[length++] = '&';
+				} else {
 					path[length++] = 0;
 				}
 			}
@@ -113,7 +113,7 @@ bool Request::doRequest(const char * method, const char * url, const char * payl
 #ifdef REQUEST_DEBUG
 		printf("HTTPS on Port %d\n", serverPort);
 #endif
-	} else {
+	}  else {
 		printf("Schema not implemented %s\n",
 				pUri->get_scheme().c_str()
 				);
@@ -170,36 +170,6 @@ bool Request::doRequest(const char * method, const char * url, const char * payl
 					"application/json",
 					strlen("application/json")
 				   );
-		}
-	}
-
-	if (xHTTPStatus == HTTPSuccess){
-
-		if ((pUsername != NULL)  && (pPassword != NULL)){
-			sprintf(authPlain, "%s:%s", pUsername, pPassword);
-			b64Encode((unsigned char *)authPlain, strlen(authPlain), (unsigned char *)auth64, REQUEST_MAX_PATH);
-			sprintf(path, "Basic %s", auth64 );
-
-			xHTTPStatus = HTTPClient_AddHeader(
-						&xRequestHeaders,
-						"Authorization",
-						strlen("Authorization") ,
-						path,
-						strlen(path)
-					   );
-
-		} else if (pUri->get_username().length() > 0){
-			sprintf(authPlain, "%s:%s", pUri->get_username().c_str(), pUri->get_password().c_str());
-			b64Encode((unsigned char *)authPlain, strlen(authPlain), (unsigned char *)auth64, REQUEST_MAX_PATH);
-			sprintf(path, "Basic %s", auth64 );
-
-			xHTTPStatus = HTTPClient_AddHeader(
-						&xRequestHeaders,
-						"Authorization",
-						strlen("Authorization") ,
-						path,
-						strlen(path)
-					   );
 		}
 	}
 
@@ -327,58 +297,23 @@ const char * Request::getUriChar(){
 }
 
 
-bool Request::b64Encode(const unsigned char *in, size_t inLen, unsigned char *out, size_t outLen){
-	char b64chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	size_t  i;
-	size_t  j;
-	size_t  v;
 
-	if (in == NULL || inLen == 0)
-		return false;
+int Request::urlEncode(char *target, const char * source){
+	int length = strlen(source);
+	int targetInd = 0;
 
-	memset(out, 0, outLen);
-
-	for (i=0, j=0; i<inLen; i+=3, j+=4) {
-		if ( (j+3) >= outLen){
-			return false;
-		}
-
-		v = in[i];
-		v = i+1 < inLen ? v << 8 | in[i+1] : v << 8;
-		v = i+2 < inLen ? v << 8 | in[i+2] : v << 8;
-
-		out[j]   = b64chars[(v >> 18) & 0x3F];
-		out[j+1] = b64chars[(v >> 12) & 0x3F];
-		if (i+1 < inLen) {
-			out[j+2] = b64chars[(v >> 6) & 0x3F];
+	for (int i=0; i < length; i++){
+		char c = source[i];
+		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+			target[targetInd++] = c;
 		} else {
-			out[j+2] = '=';
-		}
-		if (i+2 < inLen) {
-			out[j+3] = b64chars[v & 0x3F];
-		} else {
-			out[j+3] = '=';
+			if (c < 16){
+				sprintf(&target[targetInd], "%%0%X", c);
+			} else {
+				sprintf(&target[targetInd], "%%%X", c);
+			}
+			targetInd+=3;
 		}
 	}
-
-	return true;
-}
-
-
-void Request::setCredentials(char * username, char * password){
-	pUsername =  username;
-	pPassword = password;
-}
-
-void Request::heapStats(const char * prefix){
-	HeapStats_t heapStats;
-
-	vPortGetHeapStats(&heapStats);
-	printf("%s HEAP avl: %d, blocks %d, alloc: %d, free: %d\n",
-			prefix,
-		   heapStats.xAvailableHeapSpaceInBytes,
-		   heapStats.xNumberOfFreeBlocks,
-		   heapStats.xNumberOfSuccessfulAllocations,
-		   heapStats.xNumberOfSuccessfulFrees
-	);
+	return targetInd;
 }

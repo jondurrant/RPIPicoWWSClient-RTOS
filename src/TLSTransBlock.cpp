@@ -123,6 +123,7 @@ bool TLSTransBlock::transConnect(const char * host, uint16_t port){
 bool TLSTransBlock::transConnect(){
 	struct sockaddr_in serv_addr;
 	int                ret, err;
+	char buffer[80];
 
 
 	xSock = socket(AF_INET, SOCK_STREAM, 0);
@@ -133,10 +134,24 @@ bool TLSTransBlock::transConnect(){
 
 
 	/* Create the WOLFSSL_CTX */
+#ifdef WOLFSSL_TLS13
+	pCtx = wolfSSL_CTX_new(wolfTLSv1_3_client_method());
+	if ( pCtx == NULL){
+		LogError(("wolfSSL_CTX_new error.\n"));
+	}
+	wolfSSL_CTX_SetMinVersion(pCtx, WOLFSSL_TLSV1_2);
+#else
 	pCtx = wolfSSL_CTX_new(wolfTLSv1_2_client_method());
 	if ( pCtx == NULL){
 		LogError(("wolfSSL_CTX_new error.\n"));
 	}
+#endif
+
+#ifdef HAVE_SNI
+	if ( (wolfSSL_CTX_UseSNI(pCtx, WOLFSSL_SNI_HOST_NAME, xHostName, strlen(xHostName))) != WOLFSSL_SUCCESS) {
+	    printf("Setting host name failed with error condition: %d and reason %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+	}
+#endif
 
 	wolfSSL_SetIORecv(pCtx, TLSTransBlock::IORecv);
 	wolfSSL_SetIOSend(pCtx, TLSTransBlock::IOSend);
@@ -172,6 +187,9 @@ bool TLSTransBlock::transConnect(){
 
     if (ret != WOLFSSL_SUCCESS){
         LogError(("err %d: failed to connect to wolfSSL %d\n", err, ret));
+
+        wolfSSL_ERR_error_string(err, buffer);
+        printf("err = %d, %s\n", err, buffer);
        // printf("err %d: failed to connect to wolfSSL %d\n", err, ret);
         return false;
     }
