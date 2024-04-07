@@ -135,11 +135,15 @@ bool TLSTransBlock::transConnect(){
 
 	/* Create the WOLFSSL_CTX */
 #ifdef WOLFSSL_TLS13
-	pCtx = wolfSSL_CTX_new(wolfTLSv1_3_client_method());
+	if (!xTLS12){
+		pCtx = wolfSSL_CTX_new(wolfTLSv1_3_client_method());
+		wolfSSL_CTX_SetMinVersion(pCtx, WOLFSSL_TLSV1_2);
+	} else {
+		pCtx = wolfSSL_CTX_new(wolfTLSv1_2_client_method());
+	}
 	if ( pCtx == NULL){
 		LogError(("wolfSSL_CTX_new error.\n"));
 	}
-	wolfSSL_CTX_SetMinVersion(pCtx, WOLFSSL_TLSV1_2);
 #else
 	pCtx = wolfSSL_CTX_new(wolfTLSv1_2_client_method());
 	if ( pCtx == NULL){
@@ -386,4 +390,8 @@ int TLSTransBlock::IORecv(WOLFSSL* ssl, char* buff, int sz, void* ctx){
     return recvd;
 }
 
+
+void TLSTransBlock::setForceTLS12(bool state){
+	xTLS12 = state;
+}
 

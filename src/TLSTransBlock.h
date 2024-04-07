@@ -75,6 +75,13 @@ public:
 	 */
 	int32_t transRead(void * pBuffer, size_t bytesToRecv);
 
+	/***
+	 * If set to true this forces TLS1.2 even if TLS1.3 is compiled in
+	 * I've needed to do this for some sites.
+	 * @param state
+	 */
+	void setForceTLS12(bool state);
+
 private:
 
 	/***
@@ -139,6 +146,7 @@ private:
 
 	WOLFSSL_CTX* pCtx;
 	WOLFSSL* pSSL;
+	bool xTLS12 = false;
 };
 
 

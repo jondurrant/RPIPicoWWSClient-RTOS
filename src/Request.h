@@ -112,6 +112,14 @@ public:
 	 */
 	const char * getUriChar();
 
+
+	/***
+	 * If set to true this forces TLS1.2 even if TLS1.3 is compiled in
+	 * I've needed to do this for some sites.
+	 * @param state
+	 */
+	void setForceTLS12(bool state);
+
 private:
 	/***
 	 * Issue an HTTP Request
@@ -150,6 +158,7 @@ private:
 	TCPTransport xSockTrans;
 	TLSTransBlock xTLSTrans;
 	Transport *pTrans;
+	bool xTLS12 = false;
 
 };
 

@@ -107,6 +107,7 @@ bool Request::doRequest(const char * method, const char * url, const char * payl
 #endif
 	} else if (pUri->get_scheme().compare("https") == 0 ){
 		pTrans =&xTLSTrans;
+		xTLSTrans.setForceTLS12(xTLS12);
 		if (serverPort == 0){
 			serverPort = 443;
 		}
@@ -316,4 +317,9 @@ int Request::urlEncode(char *target, const char * source){
 		}
 	}
 	return targetInd;
+}
+
+
+void Request::setForceTLS12(bool state){
+	xTLS12 = state;
 }
