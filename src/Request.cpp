@@ -271,6 +271,22 @@ bool Request::post(const char * url,  std::map<std::string, std::string> *query)
 	return res;
 }
 
+bool Request::postJSON(const char * url,  JSONSerialisable *json){
+	char *payload;
+	int length=0;
+	bool res;
+
+
+	if (json != NULL){
+
+			payload = json->json();
+			length = strlen(payload);
+	}
+
+	res = doRequest("POST", url, payload, length);
+	return res;
+}
+
 int Request::getStatusCode(){
 	return xResponse.statusCode;
 }

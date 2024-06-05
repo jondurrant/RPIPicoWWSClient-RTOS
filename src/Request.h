@@ -16,6 +16,8 @@
 #include "core_http_client.h"
 #include "TCPTransport.h"
 #include "TLSTransBlock.h"
+#include "JSONSerialisable.h"
+
 
 #ifndef REQUEST_BUFFER_SIZE
 #define REQUEST_BUFFER_SIZE 256
@@ -74,6 +76,14 @@ public:
 	 */
 	bool post(const char * url,  std::map<std::string, std::string> *query = NULL);
 
+	/***
+	 * Undertake an HTTP Post
+	 * @param url - URL to connect to
+	 * @param json - JSON data to send
+	 * @return true if successful
+	 */
+	bool postJSON(const char * url,  JSONSerialisable *json);
+
 	/**
 	 * Get the HTTP result code
 	 * @return 200 for sucess
@@ -120,7 +130,7 @@ public:
 	 */
 	void setForceTLS12(bool state);
 
-private:
+protected:
 	/***
 	 * Issue an HTTP Request
 	 * @param method - Request type GET or POST
