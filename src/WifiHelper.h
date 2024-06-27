@@ -29,6 +29,12 @@ public:
 	static bool init();
 
 	/***
+	 * Deinitialise the Wifi
+	 * @return true
+	 */
+	static bool deInit();
+
+	/***
 	 * Get IP address of unit
 	 * @param ip - output uint8_t[4]
 	 * @return - true if IP addres assigned

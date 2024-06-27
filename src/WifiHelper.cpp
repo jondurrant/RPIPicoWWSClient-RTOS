@@ -41,6 +41,12 @@ bool WifiHelper::init(){
 
 }
 
+bool WifiHelper::deInit(){
+	cyw43_arch_deinit();
+	return true;
+}
+
+
 bool WifiHelper::join(const char *sid, const char *password,  uint8_t retries){
 	cyw43_arch_enable_sta_mode();
 	printf("Connecting to WiFi... %s \n", sid);
