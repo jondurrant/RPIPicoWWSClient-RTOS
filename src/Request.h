@@ -10,7 +10,13 @@
 
 #include "pico/stdlib.h"
 #include "RequestObserver.h"
+#if CPPUTEST_USE_NEW_MACROS
+   #undef new
+#endif
 #include <map>
+#if CPPUTEST_USE_NEW_MACROS
+   #include "CppUTest/MemoryLeakDetectorNewMacros.h"
+#endif
 #include <cstring>
 #include <uri.hh>
 #include "core_http_client.h"
